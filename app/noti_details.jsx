@@ -30,7 +30,7 @@ export default function NotiDetails() {
     return (
         <View style={styles.container}>
             <ScrollView>
-                {notification?.image && <Image source={{ uri: notification?.image }} style={{ width: "100%", height: 200 }} />}
+                {notification?.image && <Image source={{ uri: notification?.image }} style={{ width: "100%", height: 350 }} />}
                 <View style={styles.content}>
                     <Text style={{ fontSize: 20, fontWeight: "bold" }}>{notification?.title}</Text>
                     <Text style={{ fontSize: 12, color: "gray", }}>{notification?.created_at}</Text>

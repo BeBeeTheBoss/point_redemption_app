@@ -16,7 +16,7 @@ export default function ProfileEdit() {
     const [businessName,setBusinessName] = useState(user?.business_name);
     const [businessNameError, setBusinessNameError] = useState('');
     const [loading, setLoading] = useState(false);
-    const api = createAPI(user.token);
+    const api = createAPI(user?.token);
 
     const validate = () => {
         let isValid = true;
@@ -74,9 +74,10 @@ export default function ProfileEdit() {
             </View>
             <TextInput style={styles.textInput} editable={false} value={user.email}/>
 
-            <Text style={{ fontWeight: 'bold',marginTop:12 }}>Business Name</Text>
-            <TextInput style={[styles.textInput, { borderWidth: businessNameError ? 1 : 0, borderColor: businessNameError ? "red" : "" }]} editable={!loading} value={businessName} onChangeText={setBusinessName}/>
+            <Text style={{ fontWeight: 'bold',marginTop:12 }}>Business Name </Text>
+            <TextInput style={[styles.textInput, { borderWidth: businessNameError ? 1 : 0, borderColor: businessNameError ? "red" : "" }]} editable={!loading && user.role == "admin"} value={businessName} onChangeText={setBusinessName}/>
             {businessNameError && <Text style={{ color: 'red', fontSize: 12, fontWeight: "bold", marginLeft: 7, marginTop: -2 }}>{businessNameError}</Text>}
+            {user.role == 'user' && <Text style={{ color: 'orange', fontSize: 12, fontWeight: "bold", marginLeft: 7, marginTop: -2 }}>Only admin can change business name</Text>}
 
             <View style={{ marginTop: 25,display: "flex",flexDirection: "row",justifyContent: "space-around" }}>
                 <Button mode="contained" onPress={router.back} style={[styles.button,{backgroundColor: "#8181811c"}]} textColor='black'>Cancel</Button>

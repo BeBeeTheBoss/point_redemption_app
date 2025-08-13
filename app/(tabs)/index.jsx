@@ -1,8 +1,8 @@
 import AntDesign from '@expo/vector-icons/AntDesign';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useRef, useState } from "react";
-import { Animated, Dimensions, FlatList, Platform, RefreshControl, SafeAreaView, StyleSheet, Text, View } from "react-native";
+import { Animated, Dimensions, FlatList, Image, Platform, RefreshControl, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { ActivityIndicator, IconButton } from "react-native-paper";
 import Toast from 'react-native-toast-message';
 import BlurCircle from "../../assets/images/blur_circle.png";
@@ -236,21 +236,45 @@ export default function Index() {
 
           :
 
-          <FlatList
-            data={histories}
-            renderItem={({ item, index }) => {
-              return (
-                <View style={{ paddingVertical: 15, backgroundColor: '#7a7a7a11', marginHorizontal: 20, borderRadius: 10, marginBottom: 10, borderColor: '#7a7a7a41', display: "flex", flexDirection: "row", alignItems: "center", paddingHorizontal: 10 }}>
-                  <IconButton icon={"star-outline"} style={{ backgroundColor: "#20a10048" }} iconColor="#077703ff" size={20}></IconButton>
-                  <View style={{ flex: 1, marginLeft: 10 }}>
-                    <Text style={{ fontSize: 14, fontWeight: "bold" }}>{item.member_name} redeemed <Text style={{ color: "#1F41BB" }}>{item.promotion_name}</Text> x{item.qty}</Text>
-                    <Text style={{ fontSize: 12, color: "#686868ff", marginTop: 5 }}>{item.redeemed_points} points . {item.created_at}</Text>
+          histories.length === 0 ?
+            <FlatList
+              data={[1]}
+              renderItem={({ item, index }) => {
+                return (
+                  <View style={{ display: "flex", justifyContent: "center", alignItems: "center", height: 400 }}>
+                    <View>
+                      <View style={{ justifyContent: "center", alignItems: "center" }}>
+                        <Image source={require("../../assets/images/no_history.png")} style={{ width: 200, height: 200 }} />
+                      </View>
+                      <Text style={{ textAlign: "center", fontSize: 13, fontWeight: "bold", color: "#1F41BB", marginTop: -20 }}>No History</Text>
+                    </View>
                   </View>
-                </View>
-              );
-            }}
-            refreshControl={<RefreshControl refreshing={loading} onRefresh={getHistories} />}
-          />
+                )
+              }}
+              refreshControl={<RefreshControl refreshing={loading} onRefresh={getHistories} />}
+            />
+            :
+
+            <FlatList
+              data={histories}
+              renderItem={({ item, index }) => {
+                return (
+                  <TouchableOpacity onPress={() => router.push({ pathname: "/history_details",params: {id: item.id} })}>
+                    <View style={{ paddingVertical: 15, backgroundColor: '#7a7a7a11', marginHorizontal: 20, borderRadius: 10, marginBottom: 10, borderColor: '#7a7a7a41', display: "flex", flexDirection: "row", alignItems: "center", paddingHorizontal: 10 }}>
+                      <IconButton icon={"star-outline"} style={{ backgroundColor: "#20a10048" }} iconColor="#077703ff" size={20}></IconButton>
+                      <View style={{ flex: 1, marginLeft: 10 }}>
+                        <Text style={{ fontSize: 14, fontWeight: "bold" }}>{item.member_name} redeemed <Text style={{ color: "#1F41BB" }}>{item.promotion_name}</Text> x{item.qty}</Text>
+                        <Text style={{ fontSize: 12, color: "#686868ff", marginTop: 5 }}>{item.redeemed_points} points . {item.created_at}</Text>
+                      </View>
+                    </View>
+                  </TouchableOpacity>
+                );
+              }}
+              refreshControl={<RefreshControl refreshing={loading} onRefresh={getHistories} />}
+            />
+        }
+
+        {
         }
 
         <Toast />

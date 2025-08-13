@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "128083207104",
+    "project_id": "pointredemptionapp",
+    "storage_bucket": "pointredemptionapp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:128083207104:android:f3e87e65d6bdc1bd04de25",
+        "android_client_info": {
+          "package_name": "com.bebee2x.pointredemptionapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCD04KQ5OrNo1ACIMo_pvdFwo9IHM9idlc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

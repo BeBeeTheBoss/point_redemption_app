@@ -10,7 +10,8 @@ export default function RootLayout() {
         <Stack.Screen name="scan" options={{ headerShown: false }} />
         <Stack.Screen name="profile_edit" options={{ headerShown: true,headerBackTitle: "Profile",title:"Edit Profile" }} />
         <Stack.Screen name="change_password" options={{ headerShown: true,headerBackTitle: "Profile",title:"Change Password" }} />
-        <Stack.Screen name="noti_details" options={{ headerShown: true,headerBackTitle: "Notifications",title:"Notification" }} />
+        <Stack.Screen name="noti_details" options={{ headerShown: true,headerBackTitle: "Back",title:"Notification" }} />
+        <Stack.Screen name="history_details" options={{ headerShown: true,headerBackTitle: "Back",title:"History" }} />
       </Stack>
     </AuthProvider>
   );

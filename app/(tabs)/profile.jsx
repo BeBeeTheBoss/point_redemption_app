@@ -1,5 +1,6 @@
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Entypo from '@expo/vector-icons/Entypo';
+import Feather from '@expo/vector-icons/Feather';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Foundation from '@expo/vector-icons/Foundation';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
@@ -27,6 +28,8 @@ export default function Profile() {
 
         try {
             const response = await api.get(`/users/${user.id}`);
+            console.log(response.data.data);
+            
             storeUser(response.data.data);
 
         } catch (e) {
@@ -54,16 +57,20 @@ export default function Profile() {
                 <View style={styles.info}>
                     <Text style={{ fontSize: 16, fontWeight: 'bold' }}>Profile info</Text>
                     <View style={{ display: "flex", flexDirection: "row", alignItems: "center", marginTop: 20 }}>
+                        <Feather name="user" size={24} color="#1F41BB" style={{ marginLeft: -2 }}/>
+                        <Text style={{ marginLeft: 10,textTransform: "capitalize" }}>{user?.role} </Text>
+                    </View>
+                    <View style={{ display: "flex", flexDirection: "row", alignItems: "center", marginTop: 20 }}>
                         <Foundation name="mail" size={24} color="#1F41BB" />
                         <Text style={{ marginLeft: 10 }}>{user?.email}</Text>
                     </View>
                     <View style={{ display: "flex", flexDirection: "row", alignItems: "center", marginTop: 20 }}>
                         <MaterialIcons name="business-center" size={24} color="#1F41BB" style={{ marginLeft: -2 }} />
-                        <Text style={{ marginLeft: 8 }}>{user?.business_name}</Text>
+                        <Text style={{ marginLeft: 8 }}>{user?.business_name} {user?.branch_name ? "(" + user?.branch_name + ")" : ""}</Text>
                     </View>
                     <View style={{ display: "flex", flexDirection: "row", alignItems: "center", marginTop: 20, marginBottom: 11 }}>
                         <AntDesign name="calendar" size={24} color="#1F41BB" style={{ marginLeft: -2 }} />
-                        <Text style={{ marginLeft: 10 }}>{user?.campaign_end_date}</Text>
+                        <Text style={{ marginLeft: 10 }}>{user?.campaign_start_date} - {user?.campaign_end_date}</Text>
                     </View>
                 </View>
 

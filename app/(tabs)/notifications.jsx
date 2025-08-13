@@ -106,6 +106,9 @@ export default function Settings() {
         const tokenData = await Notifications.getExpoPushTokenAsync();
         const token = tokenData.data;
 
+        console.log(token);
+        
+
         await api.post('/users/set-push-noti-token', { token: token });
 
         if (Platform.OS === 'android') {
@@ -159,7 +162,7 @@ export default function Settings() {
                                             
                                         </View>
                                         {item?.image && <View>
-                                            <Image source={{ uri: item.image }} style={{ width: 200, height: 100, borderRadius: 10,marginLeft: 62 }} />
+                                            <Image source={{ uri: item.image }} style={{ width: 150, height: 150, borderRadius: 10,marginLeft: 62 }} />
                                         </View>}
                                     </View>
                                     

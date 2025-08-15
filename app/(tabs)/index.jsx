@@ -2,7 +2,7 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useRef, useState } from "react";
-import { Animated, Dimensions, FlatList, Image, Platform, RefreshControl, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Animated, Dimensions, FlatList, Image, Platform, RefreshControl, SafeAreaView, StyleSheet, Text, TouchableHighlight, TouchableOpacity, View } from "react-native";
 import { ActivityIndicator, IconButton } from "react-native-paper";
 import Toast from 'react-native-toast-message';
 import BlurCircle from "../../assets/images/blur_circle.png";
@@ -24,6 +24,8 @@ export default function Index() {
   const [totalPoints, setTotalPoints] = useState(0);
   const [totalUsers, setTotalUsers] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [selectedOption, setSelectedOption] = useState('This month');
+  const [openSelect, setOpenSelect] = useState(false);
 
   const loopAnimation1 = (animatedValue, delay = 0) => {
     Animated.loop(
@@ -79,12 +81,12 @@ export default function Index() {
     ).start();
   };
 
-  const getHistories = async () => {
+  const getHistories = async (filterBy = null) => {
 
     setLoading(true);
 
     try {
-      const response = await api.get('/histories');
+      const response = await api.get('/histories', { params: { filterBy: filterBy ?? selectedOption } });
 
       let redeemedUsersArray = [];
       let total = 0;
@@ -107,6 +109,12 @@ export default function Index() {
       setLoading(false);
       console.log(e);
     }
+  }
+
+  const handleSelect = (option) => {
+    setOpenSelect(false);
+    setSelectedOption(option.label);
+    getHistories(option.label);
   }
 
   useEffect(() => {
@@ -200,13 +208,13 @@ export default function Index() {
 
           <View style={{ backgroundColor: "#1f41bbff", padding: 15, width: "49%", borderRadius: 10 }}>
             <Text style={{ color: "white" }}>Total Users</Text>
-            <Text style={{ fontSize: 28, marginVertical: 5, fontWeight: "bold", color: "white" }}><FontAwesome5 name="users" size={20} color="white" /> {totalUsers}</Text>
-            <Text style={{ fontSize: 12, color: "white" }}>this month</Text>
+            <Text style={{ fontSize: 28, marginVertical: 5, fontWeight: "bold", color: "white" }}><FontAwesome5 name="users" size={20} color="white" /> {totalUsers.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</Text>
+            <Text style={{ fontSize: 12, color: "white",textTransform: "lowercase" }}>{selectedOption}</Text>
           </View>
           <View style={{ backgroundColor: "#0a818aff", padding: 15, width: "49%", marginLeft: 5, borderRadius: 10 }}>
             <Text style={{ color: "white" }}>Points Used</Text>
-            <Text style={{ fontSize: 28, marginVertical: 5, fontWeight: "bold", color: "white" }}><FontAwesome5 name="coins" size={20} color="white" /> {totalPoints}</Text>
-            <Text style={{ fontSize: 12, color: "white" }}>this month</Text>
+            <Text style={{ fontSize: 28, marginVertical: 5, fontWeight: "bold", color: "white" }}><FontAwesome5 name="coins" size={20} color="white" /> {totalPoints.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</Text>
+            <Text style={{ fontSize: 12, color: "white",textTransform: "lowercase" }}>{selectedOption}</Text>
           </View>
 
         </View>
@@ -223,7 +231,27 @@ export default function Index() {
         >
 
           <Text style={{ fontSize: 16, fontWeight: "bold", color: "#1F41BB" }}>Histories</Text>
-          <AntDesign name="filter" size={18} color="#1F41BB" />
+          <View style={{ position: "relative",width: 150 }}>
+            <TouchableHighlight activeOpacity={0.6}
+              underlayColor="#DDDDDD" onPress={() => { setOpenSelect(!openSelect) }} style={{ borderWidth: 0.5, borderColor: "#DDDDDD", paddingHorizontal: 20, paddingVertical: 7, borderRadius: 8, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                <Text>{selectedOption}</Text>
+                <AntDesign name="caretdown" size={10} style={{ marginLeft:8 }} color="#636363af" />
+              </View>
+            </TouchableHighlight>
+            {openSelect && <View style={{ elevation: 0, position: "absolute", top: 38, backgroundColor: "#fff", borderRadius: 10, borderWidth: 0.5, borderColor: "#6363636c", width: 100, zIndex: 1, width: "100%",padding: 2 }}>
+              <FlatList
+                data={[{ 'label': 'This month', 'value': 'month' }, { 'label': 'This day', 'value': 'day' }]}
+                renderItem={({ item, index }) => {
+                  return (
+                    <TouchableHighlight activeOpacity={0.6} onPress={(e) => {handleSelect(item)}} underlayColor="#DDDDDD" style={{ paddingHorizontal: 20, paddingVertical: 10,borderRadius: 10 }}>
+                      <Text>{item.label}</Text>
+                    </TouchableHighlight>
+                  )
+                }}
+              />
+            </View>}
+          </View>
 
         </View>
 
@@ -259,7 +287,7 @@ export default function Index() {
               data={histories}
               renderItem={({ item, index }) => {
                 return (
-                  <TouchableOpacity onPress={() => router.push({ pathname: "/history_details",params: {id: item.id} })}>
+                  <TouchableOpacity onPress={() => router.push({ pathname: "/history_details", params: { id: item.id } })}>
                     <View style={{ paddingVertical: 15, backgroundColor: '#7a7a7a11', marginHorizontal: 20, borderRadius: 10, marginBottom: 10, borderColor: '#7a7a7a41', display: "flex", flexDirection: "row", alignItems: "center", paddingHorizontal: 10 }}>
                       <IconButton icon={"star-outline"} style={{ backgroundColor: "#20a10048" }} iconColor="#077703ff" size={20}></IconButton>
                       <View style={{ flex: 1, marginLeft: 10 }}>

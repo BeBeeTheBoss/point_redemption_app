@@ -1,6 +1,6 @@
 import { router } from "expo-router";
 import { useState } from "react";
-import { FlatList, Image, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { FlatList, Image, Platform, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { ActivityIndicator, IconButton } from "react-native-paper";
 import createAPI from "../../lib/api";
 import { useAuth } from "../../lib/authContext";
@@ -30,7 +30,7 @@ export default function Search() {
 
     return (
         <SafeAreaView style={styles.container}>
-            <View style={{ display: "flex", flexDirection: "row", alignItems: "center",marginBottom: 10 }}>
+            <View style={{ display: "flex", flexDirection: "row", alignItems: "center",marginTop: Platform.OS === 'ios' ? -40 : 0,marginHorizontal: Platform.OS === 'ios' ? 20 : 0 }}>
                 <TextInput mode="outlined" placeholder="Search" value={searchKey} style={styles.searchBox} onChangeText={(e) => setSearchKey(e)} />
                 <TouchableOpacity onPress={search}>
                     <IconButton iconColor="white" icon="magnify" style={styles.searchButton} />
@@ -58,7 +58,7 @@ export default function Search() {
                             }}
                         /> :
                         <FlatList data={[1]} renderItem={({ item }) => (
-                            <View style={{ flex: 1, justifyContent: "center", alignItems: "center", marginTop: "60%" }}>
+                            <View style={{ flex: 1, justifyContent: "center", alignItems: "center", marginTop: "50%" }}>
                                 <Image source={require("../../assets/images/no_data.jpg")} style={{ width: 200, height: 200 }} />
                                 <Text style={{ fontSize: 14, fontWeight: "bold", marginTop: -20 }}>No Data Found</Text>
                             </View>
@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "white",
-        padding: 20
+        paddingHorizontal: 20
     },
     searchBox: {
         height: 50,

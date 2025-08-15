@@ -173,7 +173,7 @@ export default function Settings() {
                         />
                         {notifications?.length == 0 &&
                             <View style={{ flex: 1, display: "flex", justifyContent: "center", alignItems: "center" }}>
-                                <Image style={{ width: 180, height: 180, marginTop: -550 }} source={require('../../assets/images/no_data.jpg')} />
+                                <Image style={{ width: 180, height: 180, marginTop: -700 }} source={require('../../assets/images/no_data.jpg')} />
                                 <Text style={{ fontWeight: "bold", marginTop: -10 }}>No notifications</Text>
                             </View>
                         }

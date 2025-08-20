@@ -1,34 +1,7 @@
-import NetInfo from "@react-native-community/netinfo";
-import { Stack, useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import { Stack } from "expo-router";
 import { AuthProvider } from "../lib/authContext";
 
 export default function RootLayout() {
-  const [isConnected, setIsConnected] = useState(true);
-  const router = useRouter();
-
-  useEffect(() => {
-    const unsubscribe = NetInfo.addEventListener(state => {
-      const reachable = state.isInternetReachable;
-
-      if (reachable === null) {
-        setIsConnected(null);
-        return;
-      }
-
-      const online = state.isConnected && reachable;
-      setIsConnected(online);
-
-      if (!online) {
-        router.replace("/no_internet_screen");
-      } else {
-        router.replace("/(tabs)");
-      }
-    });
-
-    return () => unsubscribe();
-  }, []);
-
   return (
     <AuthProvider>
       <Stack>

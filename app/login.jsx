@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
-import { Animated, Dimensions, Image, KeyboardAvoidingView, Platform, SafeAreaView, StyleSheet, Text, TextInput, View } from "react-native";
+import { Animated, Dimensions, Image, Keyboard, KeyboardAvoidingView, Platform, SafeAreaView, StyleSheet, Text, TextInput, View } from "react-native";
 import { ActivityIndicator, Button } from "react-native-paper";
 import Toast from "react-native-toast-message";
 import createAPI from '../lib/api';
@@ -21,6 +21,7 @@ export default function Login() {
     const [password, setPassword] = useState('');
     const [passwordError, setPasswordError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [keyboardVisible, setKeyboardVisible] = useState(false);
     const { storeUser } = useAuth();
 
     const loopAnimation1 = (animatedValue, delay = 0) => {
@@ -81,6 +82,19 @@ export default function Login() {
         loopAnimation1(translateX1, 0);
         loopAnimation2(translateX2, 1000); // staggered start
         loopAnimation3(translateX3, 1000);
+
+        const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
+            setKeyboardVisible(true);
+        });
+        const hideSubscription = Keyboard.addListener("keyboardDidHide", () => {
+            setKeyboardVisible(false);
+        });
+
+        return () => {
+            showSubscription.remove();
+            hideSubscription.remove();
+        };
+
     }, []);
 
 
@@ -91,13 +105,13 @@ export default function Login() {
         if (email == '') {
             isValid = false;
             setEmailError('Email is required');
-        }else{
-            setEmailError('');    
+        } else {
+            setEmailError('');
         }
         if (password == '') {
             isValid = false;
             setPasswordError('Password is required');
-        }else{
+        } else {
             setPasswordError('');
         }
 
@@ -107,7 +121,7 @@ export default function Login() {
 
     const handleLogin = async () => {
 
-        if(!validate()) return;
+        if (!validate()) return;
 
         setLoading(true);
 
@@ -116,13 +130,15 @@ export default function Login() {
             const response = await api.post('login', {
                 email: email,
                 password: password
+            }, {
+                timeout: 15000,
             })
 
             if (response.data.status != 200) {
 
-                if(response.data.status == 404){
+                if (response.data.status == 404) {
                     setEmailError(response.data.message);
-                }else if(response.data.status == 401){
+                } else if (response.data.status == 401) {
                     setPasswordError(response.data.message);
                 }
 
@@ -134,14 +150,14 @@ export default function Login() {
                     visibilityTime: 3000,
                 });
 
-            }else{
+            } else {
                 Toast.show({
                     type: 'success',
                     text1: response.data.message,
                     position: 'top',
                     visibilityTime: 3000,
                 })
-                
+
                 storeUser(response.data.data);
                 router.replace('/');
 
@@ -150,6 +166,15 @@ export default function Login() {
             setLoading(false);
 
         } catch (e) {
+            if (e.code === 'ECONNABORTED') {
+                Toast.show({
+                    type: 'error',
+                    text1: "Can't signin",
+                    text2: "Server is not reachable",
+                    position: 'top',
+                    visibilityTime: 3000,
+                });
+            }
             setLoading(false);
             console.log(e)
         }
@@ -159,10 +184,10 @@ export default function Login() {
     return (
         <SafeAreaView style={styles.container}>
 
-            <Image
+            {!keyboardVisible && <Image
                 source={require('../assets/images/PRO_1_Global_Logo.png')}
                 style={{ width: 120, height: 40, marginTop: Platform.OS === 'android' ? 80 : 50, marginLeft: 20 }}
-            />
+            />}
 
             <Animated.Image
                 source={require('../assets/images/blur_circle.png')}
@@ -205,17 +230,17 @@ export default function Login() {
                 ]}
             />
 
-            <View style={styles.content}>
+            <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.content}>
                 <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#1F41BB' }}>Login here</Text>
                 <Text style={{ marginTop: 20, fontWeight: 'bold' }}>Welcome back you've </Text>
                 <Text style={{ fontWeight: 'bold' }}>been missed!</Text>
 
-                <KeyboardAvoidingView style={{ width: '100%', marginTop: 20 }}>
+                <View style={{ width: '100%', marginTop: 20 }}>
                     <TextInput placeholder="Email" onChangeText={setEmail} value={email} autoCapitalize='none' style={[styles.inputBox, emailError ? { borderWidth: 1, borderColor: "red" } : null]} placeholderTextColor={"#626262"} />
-                    {emailError && <Text style={{ color: "red", marginTop: 7,marginLeft: 2,fontSize: 12,fontWeight: 'bold'}}>{emailError}</Text>}
+                    {emailError && <Text style={{ color: "red", marginTop: 7, marginLeft: 2, fontSize: 12, fontWeight: 'bold' }}>{emailError}</Text>}
 
                     <TextInput placeholder="Password" onChangeText={setPassword} value={password} secureTextEntry style={[styles.inputBox, passwordError ? { borderWidth: 1, borderColor: "red" } : null]} placeholderTextColor={"#626262"} />
-                    {passwordError && <Text style={{ color: "red", marginTop: 7,marginLeft: 2,fontSize: 12,fontWeight: 'bold'}}>{passwordError}</Text>}
+                    {passwordError && <Text style={{ color: "red", marginTop: 7, marginLeft: 2, fontSize: 12, fontWeight: 'bold' }}>{passwordError}</Text>}
 
                     <Text style={{ marginVertical: 20, color: '#1F41BB', fontSize: 12, textAlign: 'right', fontWeight: 'bold' }}>Forgot your password?</Text>
 
@@ -223,9 +248,9 @@ export default function Login() {
                         <Text style={{ color: '#fff', fontWeight: 'bold' }}>{loading ? <ActivityIndicator size={20} color="white" /> : 'Login'}</Text>
                     </Button>
 
-                </KeyboardAvoidingView>
+                </View>
 
-            </View>
+            </KeyboardAvoidingView>
             <Toast />
 
         </SafeAreaView>

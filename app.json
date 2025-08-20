@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "point-redemption-app",
+    "name": "Member Point Redemption",
     "slug": "point-redemption-app",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -15,6 +15,9 @@
       }
     },
     "android": {
+      "notification": {
+        "icon": "./assets/images/adaptive-icon.png"
+      },
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -37,8 +40,8 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
+          "image": "./assets/images/adaptive-icon.png",
+          "imageWidth": 300,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }

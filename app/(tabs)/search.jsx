@@ -39,13 +39,15 @@ export default function Search() {
             {loading ?
                 <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
                     <ActivityIndicator size={35} color='#1F41BB' style={{ marginTop: -40, alignSelf: "center" }} />
-                </View> : <View>
+                </View> : <View style={{ backgroundColor: "white",height: Platform.OS === 'ios' ? "101%" : "98%"}}>
                     {searchData.length > 0 ?
                         <FlatList
                             data={searchData}
+                            style={{ marginBottom: 70,marginHorizontal: Platform.OS === 'ios' ? 20 : 0,paddingBottom: Platform.OS === 'ios' ? 0 : 20 }}
+                            showsVerticalScrollIndicator={false}
                             renderItem={({ item, index }) => {
                                 return (
-                                    <TouchableOpacity onPress={() => router.push({ pathname: "/history_details", params: { id: item.id } })}>
+                                    <TouchableOpacity onPress={() => router.push({ pathname: "/history_details", params: { id: item.id } })} style={{ marginBottom: (index === searchData.length - 1 && Platform.OS === 'android') ? 15.5 : 0 }}>
                                         <View style={{ paddingVertical: 15, backgroundColor: '#7a7a7a11', borderRadius: 10, marginBottom: 10, borderColor: '#7a7a7a41', display: "flex", flexDirection: "row", alignItems: "center", paddingHorizontal: 10 }}>
                                             <IconButton icon={"star-outline"} style={{ backgroundColor: "#20a10048" }} iconColor="#077703ff" size={20}></IconButton>
                                             <View style={{ flex: 1, marginLeft: 10 }}>
@@ -56,14 +58,13 @@ export default function Search() {
                                     </TouchableOpacity>
                                 );
                             }}
-                        /> :
+                        /> :                                                                                    
                         <FlatList data={[1]} renderItem={({ item }) => (
-                            <View style={{ flex: 1, justifyContent: "center", alignItems: "center", marginTop: "50%" }}>
-                                <Image source={require("../../assets/images/no_data.jpg")} style={{ width: 200, height: 200 }} />
-                                <Text style={{ fontSize: 14, fontWeight: "bold", marginTop: -20 }}>No Data Found</Text>
+                            <View style={{ flex: 1, justifyContent: "center", alignItems: "center", marginTop: "51%",paddingBottom: 100 }}>
+                                <Image source={require("../../assets/images/no_data.jpg")} style={{ width: 180, height: 180 }} />
+                                <Text style={{ fontWeight: "bold", marginTop: -10 }}>No Data Found</Text> 
                             </View>
                         )}
-
                         />
                     }
                 </View>}

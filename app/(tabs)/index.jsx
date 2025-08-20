@@ -86,7 +86,7 @@ export default function Index() {
     setLoading(true);
 
     try {
-      const response = await api.get('/histories', { params: { filterBy: filterBy ?? selectedOption } });
+      const response = await api.get('/histories', { params: { filterBy: filterBy ?? selectedOption }, timeout: 15000 },);
 
       let redeemedUsersArray = [];
       let total = 0;
@@ -108,6 +108,23 @@ export default function Index() {
     } catch (e) {
       setLoading(false);
       console.log(e);
+
+      if (e.code === 'ECONNABORTED') {
+        Toast.show({
+          type: 'error',
+          text1: "Can't refresh",
+          text2: "Server is not reachable",
+          position: 'top',
+          visibilityTime: 3000,
+        });
+      }
+
+      if (e.response.status == 401) {
+        console.log("Error");
+
+        router.replace("/login");
+        await AsyncStorage.removeItem("user");
+      }
     }
   }
 
@@ -128,7 +145,7 @@ export default function Index() {
       });
     }
 
-    getHistories();
+    if (user) getHistories();
 
     loopAnimation1(translateX1, 0);
     loopAnimation2(translateX2, 1000); // staggered start
@@ -136,10 +153,10 @@ export default function Index() {
 
   }, [user]);
 
-  if (authLoading && !user) {
+  if (authLoading || user == null) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size={30} color="black" />
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "white" }}>
+        <ActivityIndicator size={30} color="#1F41BB" />
       </View>
     );
   } else {
@@ -209,12 +226,12 @@ export default function Index() {
           <View style={{ backgroundColor: "#1f41bbff", padding: 15, width: "49%", borderRadius: 10 }}>
             <Text style={{ color: "white" }}>Total Users</Text>
             <Text style={{ fontSize: 28, marginVertical: 5, fontWeight: "bold", color: "white" }}><FontAwesome5 name="users" size={20} color="white" /> {totalUsers.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</Text>
-            <Text style={{ fontSize: 12, color: "white",textTransform: "lowercase" }}>{selectedOption}</Text>
+            <Text style={{ fontSize: 12, color: "white", textTransform: "lowercase" }}>{selectedOption}</Text>
           </View>
           <View style={{ backgroundColor: "#0a818aff", padding: 15, width: "49%", marginLeft: 5, borderRadius: 10 }}>
             <Text style={{ color: "white" }}>Points Used</Text>
             <Text style={{ fontSize: 28, marginVertical: 5, fontWeight: "bold", color: "white" }}><FontAwesome5 name="coins" size={20} color="white" /> {totalPoints.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</Text>
-            <Text style={{ fontSize: 12, color: "white",textTransform: "lowercase" }}>{selectedOption}</Text>
+            <Text style={{ fontSize: 12, color: "white", textTransform: "lowercase" }}>{selectedOption}</Text>
           </View>
 
         </View>
@@ -231,20 +248,20 @@ export default function Index() {
         >
 
           <Text style={{ fontSize: 16, fontWeight: "bold", color: "#1F41BB" }}>Histories</Text>
-          <View style={{ position: "relative",width: 150 }}>
+          <View style={{ position: "relative", width: 150 }}>
             <TouchableHighlight activeOpacity={0.6}
               underlayColor="#DDDDDD" onPress={() => { setOpenSelect(!openSelect) }} style={{ borderWidth: 0.5, borderColor: "#DDDDDD", paddingHorizontal: 20, paddingVertical: 7, borderRadius: 8, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                 <Text>{selectedOption}</Text>
-                <AntDesign name="caretdown" size={10} style={{ marginLeft:8 }} color="#636363af" />
+                <AntDesign name="caretdown" size={10} style={{ marginLeft: 8 }} color="#636363af" />
               </View>
             </TouchableHighlight>
-            {openSelect && <View style={{ elevation: 0, position: "absolute", top: 38, backgroundColor: "#fff", borderRadius: 10, borderWidth: 0.5, borderColor: "#6363636c", width: 100, zIndex: 1, width: "100%",padding: 2 }}>
+            {openSelect && <View style={{ elevation: 0, position: "absolute", top: 38, backgroundColor: "#fff", borderRadius: 10, borderWidth: 0.5, borderColor: "#6363636c", width: 100, zIndex: 1, width: "100%", padding: 2 }}>
               <FlatList
                 data={[{ 'label': 'This month', 'value': 'month' }, { 'label': 'This day', 'value': 'day' }]}
                 renderItem={({ item, index }) => {
                   return (
-                    <TouchableHighlight activeOpacity={0.6} onPress={(e) => {handleSelect(item)}} underlayColor="#DDDDDD" style={{ paddingHorizontal: 20, paddingVertical: 10,borderRadius: 10 }}>
+                    <TouchableHighlight activeOpacity={0.6} onPress={(e) => { handleSelect(item) }} underlayColor="#DDDDDD" style={{ paddingHorizontal: 20, paddingVertical: 10, borderRadius: 10 }}>
                       <Text>{item.label}</Text>
                     </TouchableHighlight>
                   )
@@ -255,56 +272,54 @@ export default function Index() {
 
         </View>
 
+        <View style={{ height: "65%" }}>
+          {loading ?
 
-        {loading ?
+            <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+              <ActivityIndicator size={35} color='#1F41BB' style={{ marginTop: -40, alignSelf: "center" }} />
+            </View>
 
-          <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-            <ActivityIndicator size={35} color='#1F41BB' style={{ marginTop: -40, alignSelf: "center" }} />
-          </View>
-
-          :
-
-          histories.length === 0 ?
-            <FlatList
-              data={[1]}
-              renderItem={({ item, index }) => {
-                return (
-                  <View style={{ display: "flex", justifyContent: "center", alignItems: "center", height: 400 }}>
-                    <View>
-                      <View style={{ justifyContent: "center", alignItems: "center" }}>
-                        <Image source={require("../../assets/images/no_history.png")} style={{ width: 200, height: 200 }} />
-                      </View>
-                      <Text style={{ textAlign: "center", fontSize: 13, fontWeight: "bold", color: "#1F41BB", marginTop: -20 }}>No History</Text>
-                    </View>
-                  </View>
-                )
-              }}
-              refreshControl={<RefreshControl refreshing={loading} onRefresh={getHistories} />}
-            />
             :
 
-            <FlatList
-              data={histories}
-              renderItem={({ item, index }) => {
-                return (
-                  <TouchableOpacity onPress={() => router.push({ pathname: "/history_details", params: { id: item.id } })}>
-                    <View style={{ paddingVertical: 15, backgroundColor: '#7a7a7a11', marginHorizontal: 20, borderRadius: 10, marginBottom: 10, borderColor: '#7a7a7a41', display: "flex", flexDirection: "row", alignItems: "center", paddingHorizontal: 10 }}>
-                      <IconButton icon={"star-outline"} style={{ backgroundColor: "#20a10048" }} iconColor="#077703ff" size={20}></IconButton>
-                      <View style={{ flex: 1, marginLeft: 10 }}>
-                        <Text style={{ fontSize: 14, fontWeight: "bold" }}>{item.member_name} redeemed <Text style={{ color: "#1F41BB" }}>{item.promotion_name}</Text> x{item.qty}</Text>
-                        <Text style={{ fontSize: 12, color: "#686868ff", marginTop: 5 }}>{item.redeemed_points} points . {item.created_at}</Text>
+            histories.length === 0 ?
+              <FlatList
+                data={[1]}
+                renderItem={({ item, index }) => {
+                  return (
+                    <View style={{ display: "flex", justifyContent: "center", alignItems: "center", height: 400 }}>
+                      <View>
+                        <View style={{ justifyContent: "center", alignItems: "center" }}>
+                          <Image source={require("../../assets/images/no_history.png")} style={{ width: 200, height: 200 }} />
+                        </View>
+                        <Text style={{ textAlign: "center", fontSize: 13, fontWeight: "bold", color: "#1F41BB", marginTop: -20 }}>No History</Text>
                       </View>
                     </View>
-                  </TouchableOpacity>
-                );
-              }}
-              refreshControl={<RefreshControl refreshing={loading} onRefresh={getHistories} />}
-            />
-        }
+                  )
+                }}
+                refreshControl={<RefreshControl refreshing={loading} onRefresh={getHistories} />}
+              />
+              :
 
-        {
-        }
-
+              <FlatList
+                data={histories}
+                // style={{ marginBottom: Platform.OS === 'ios' ? 0 : -50, paddingBottom: Platform.OS === 'ios' ? 0 : 0 }}
+                renderItem={({ item, index }) => {
+                  return (
+                    <TouchableOpacity onPress={() => router.push({ pathname: "/history_details", params: { id: item.id } })}>
+                      <View style={{ paddingVertical: 15, backgroundColor: '#7a7a7a11', marginHorizontal: 20, borderRadius: 10, marginBottom: 10, borderColor: '#7a7a7a41', display: "flex", flexDirection: "row", alignItems: "center", paddingHorizontal: 10 }}>
+                        <IconButton icon={"star-outline"} style={{ backgroundColor: "#20a10048" }} iconColor="#077703ff" size={20}></IconButton>
+                        <View style={{ flex: 1, marginLeft: 10 }}>
+                          <Text style={{ fontSize: 14, fontWeight: "bold" }}>{item.member_name} redeemed <Text style={{ color: "#1F41BB" }}>{item.promotion_name}</Text> x{item.qty}</Text>
+                          <Text style={{ fontSize: 12, color: "#686868ff", marginTop: 5 }}>{item.redeemed_points} points . {item.created_at}</Text>
+                        </View>
+                      </View>
+                    </TouchableOpacity>
+                  );
+                }}
+                refreshControl={<RefreshControl refreshing={loading} onRefresh={getHistories} />}
+              />
+          }
+        </View>
         <Toast />
       </SafeAreaView>
     );

@@ -58,7 +58,7 @@ export default function Profile() {
                     <Text style={{ fontSize: 16, fontWeight: 'bold' }}>Profile info</Text>
                     <View style={{ display: "flex", flexDirection: "row", alignItems: "center", marginTop: 20 }}>
                         <Feather name="user" size={24} color="#1F41BB" style={{ marginLeft: -2 }}/>
-                        <Text style={{ marginLeft: 10,textTransform: "capitalize" }}>{user?.role} </Text>
+                        <Text style={{ marginLeft: 6,textTransform: "capitalize" }}>{user?.role} </Text>
                     </View>
                     <View style={{ display: "flex", flexDirection: "row", alignItems: "center", marginTop: 20 }}>
                         <Foundation name="mail" size={24} color="#1F41BB" />

@@ -107,7 +107,6 @@ export default function Settings() {
         const token = tokenData.data;
 
         console.log(token);
-        
 
         await api.post('/users/set-push-noti-token', { token: token });
 
@@ -126,7 +125,7 @@ export default function Settings() {
     return (
         <SafeAreaView style={styles.container}>
             <View style={{ height: "100%", marginTop: Platform.OS === 'android' ? 60 : 20, }}>
-                <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginHorizontal: 20,marginBottom: 10 }}>
+                <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginHorizontal: 20, marginBottom: 10 }}>
                     <Text style={{ fontSize: 20, fontWeight: "bold" }}>Notifications</Text>
                     <TouchableOpacity onPress={markAllAsRead}>
                         <Ionicons name="checkmark-done-outline" size={24} color="#1F41BB" />
@@ -138,44 +137,49 @@ export default function Settings() {
                         <ActivityIndicator size={45} color='#1F41BB' />
                     </View>
                     :
-                    <View style={{ height: "100%", marginHorizontal: 7,paddingBottom:54 }}>
-                        <FlatList
+                    <View style={{ height: "100%", marginHorizontal: 7,height: Platform.OS === 'ios' ? "92%" : "87%" }}>
+                        {notifications?.length > -0 && <FlatList
                             data={notifications}
+                            showsVerticalScrollIndicator={false}
                             renderItem={({ item }) => (
                                 <TouchableOpacity onPress={() => {
                                     router.push({ pathname: 'noti_details', params: { id: item.id } });
                                     !item.is_read && markAsRead(item.id);
                                 }} style={{ borderBottomColor: '#b3b3b341', borderBottomWidth: 1, paddingHorizontal: 10, paddingVertical: 10 }}>
-                                    <View style={{}}>
-                                        <View style={{ width:  "100%" }}>
-                                            <View style={{ display: "flex", flexDirection: "row", alignItems: "center",justifyContent: "space-between" }}>
+                                    <View>
+                                        <View style={{ width: "100%" }}>
+                                            <View style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
                                                 <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
                                                     <Image source={require('../../assets/images/logo.png')} style={{ width: 50, height: 50, borderRadius: 10 }} />
-                                                    <Text style={{ fontSize: 15, fontWeight: "bold", marginLeft: 10,maxWidth: 317 }}>{item.title}</Text>
-                                                    {!item?.is_read && <View style={{ height: 15, width: 15, backgroundColor: "#1F41BB", borderRadius: 50, position: "absolute", top: -3, left: 40,borderWidth: 2,borderColor: "white",borderRadius:50 }}></View>}
+                                                    <Text style={{ fontSize: 15, fontWeight: "bold", marginLeft: 10, maxWidth: 317,height: 29 }}>{item.title}</Text>
+                                                    {!item?.is_read && <View style={{ height: 15, width: 15, backgroundColor: "#1F41BB", borderRadius: 50, position: "absolute", top: -3, left: 40, borderWidth: 2, borderColor: "white", borderRadius: 50 }}></View>}
                                                 </View>
                                                 <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                                                    <Text style={{ fontSize: 12,color: '#7a7a7a' }}>{`${item.created_at.split(' ')[0]}${item.created_at.split(' ')[1].charAt(0)}`}</Text>
+                                                    <Text style={{ fontSize: 12, color: '#7a7a7a' }}>{`${item.created_at.split(' ')[0]}${item.created_at.split(' ')[1].charAt(0)}`}</Text>
                                                 </View>
                                             </View>
-                                            {item.body && <Text style={{ fontSize: 12, marginTop: 2, paddingRight: 7,marginBottom: 15,marginLeft: 62 }}>{item.body.slice(0, 80)}{item.body.length > 50 ? '...' : ''}</Text>}
-                                            
+                                            {item.body && <Text style={{ fontSize: 12, marginTop: 2, paddingRight: 7, marginBottom: 15, marginLeft: 62 }}>{item.body.slice(0, 80)}{item.body.length > 50 ? '...' : ''}</Text>}
                                         </View>
                                         {item?.image && <View>
-                                            <Image source={{ uri: item.image }} style={{ width: 150, height: 150, borderRadius: 10,marginLeft: 62 }} />
+                                            <Image source={{ uri: item.image }} style={{ width: 150, height: 150, borderRadius: 10, marginLeft: 62 }} />
                                         </View>}
                                     </View>
-                                    
+
                                 </TouchableOpacity>
                             )}
                             keyExtractor={item => item.id}
                             refreshControl={<RefreshControl refreshing={loading} onRefresh={getNotifications} />}
-                        />
+                        />}
                         {notifications?.length == 0 &&
-                            <View style={{ flex: 1, display: "flex", justifyContent: "center", alignItems: "center" }}>
-                                <Image style={{ width: 180, height: 180, marginTop: -700 }} source={require('../../assets/images/no_data.jpg')} />
-                                <Text style={{ fontWeight: "bold", marginTop: -10 }}>No notifications</Text>
-                            </View>
+                            <FlatList data={[1]}
+                                renderItem={({ item }) => (
+                                    <View style={{ flex: 1, display: "flex", justifyContent: "center", alignItems: "center", marginTop: "50%" }}>
+                                        <Image style={{ width: 180, height: 180 }} source={require('../../assets/images/no_data.jpg')} />
+                                        <Text style={{ fontWeight: "bold", marginTop: -10 }}>No notifications</Text>
+                                    </View>
+                                )}
+                                refreshControl={<RefreshControl refreshing={loading} onRefresh={getNotifications} />}
+                            />
                         }
                     </View>}
             </View>

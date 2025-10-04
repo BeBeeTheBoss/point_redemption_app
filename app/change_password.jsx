@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { StyleSheet, Text, TextInput, View } from 'react-native';
+import { StyleSheet, Text, TextInput, TouchableHighlight, View } from 'react-native';
 import { ActivityIndicator, Button } from 'react-native-paper';
 import createAPI from '../lib/api';
 import { useAuth } from '../lib/authContext';
@@ -80,9 +80,27 @@ export default function ChangePassword() {
 
             <View style={{ marginTop: 25, display: "flex", flexDirection: "row", justifyContent: "space-around" }}>
                 <Button mode="contained" onPress={router.back} style={[styles.button, { backgroundColor: "#8181811c" }]} textColor='black'>Cancel</Button>
-                <Button mode="contained" style={[styles.button, { backgroundColor: "#1F41BB" }]} onPress={handleChangePassword}>
-                    {loading ? <Text style={{ fontSize: 15 }}> <ActivityIndicator size={14} color="white" /> Updating</Text> : <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}><Text style={{ fontSize: 15, color: "white" }}> Update</Text></View>}
-                </Button>
+                <TouchableHighlight
+                    onPress={handleChangePassword}
+                    underlayColor="#1F41BB"
+                    style={{
+                        width: '48%',
+                        height: 45,
+                        borderRadius: 7,
+                        backgroundColor: '#1F41BB',
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "center",
+                    }}
+                    disabled={loading}
+                >
+                    {loading ? (
+                        <Text style={{ fontSize: 15,color: "white" }}> <ActivityIndicator size={14} color="white" /> Updating</Text>
+                    ) : (
+                        <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}><Text style={{ fontSize: 15, color: "white" }}> Update</Text></View>
+                    )}
+                </TouchableHighlight>
             </View>
 
         </View>

@@ -31,7 +31,7 @@ export default function Search() {
     return (
         <SafeAreaView style={styles.container}>
             <View style={{ display: "flex", flexDirection: "row", alignItems: "center",marginTop: Platform.OS === 'ios' ? -40 : 0,marginHorizontal: Platform.OS === 'ios' ? 20 : 0 }}>
-                <TextInput mode="outlined" placeholder="Search" value={searchKey} style={styles.searchBox} onChangeText={(e) => setSearchKey(e)} />
+                <TextInput mode="outlined" placeholderTextColor={"#000"} placeholder="Search" value={searchKey} style={styles.searchBox} onChangeText={(e) => setSearchKey(e)} />
                 <TouchableOpacity onPress={search}>
                     <IconButton iconColor="white" icon="magnify" style={styles.searchButton} />
                 </TouchableOpacity>
@@ -86,6 +86,7 @@ const styles = StyleSheet.create({
         marginTop: 47,
         marginBottom: 10,
         width: "90%",
+        color: "black",
         paddingHorizontal: 10,
     },
     searchButton: {

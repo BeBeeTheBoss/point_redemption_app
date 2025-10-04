@@ -52,6 +52,12 @@ export default function Scan() {
       setScanned(true);
       console.log(data);
 
+      const points = data.split('|')[3];
+      if (!Number(points) || isNaN(Number(points))) {
+        setInvalid("Invalid QR Code");
+        return;
+      }
+
       const response = await api.post('redeem-points', { idcard: data.split('|')[1], points: data.split('|')[3], promotion_code: (data.split('|')[5]).split(',')[0], qty: data.split('|')[4] });
       console.log(response.data);
 

@@ -1,4 +1,4 @@
-import AntDesign from '@expo/vector-icons/AntDesign';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useRef, useState } from "react";
@@ -253,7 +253,7 @@ export default function Index() {
               underlayColor="#DDDDDD" onPress={() => { setOpenSelect(!openSelect) }} style={{ borderWidth: 0.5, borderColor: "#DDDDDD", paddingHorizontal: 20, paddingVertical: 7, borderRadius: 8, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                 <Text>{selectedOption}</Text>
-                <AntDesign name="caretdown" size={10} style={{ marginLeft: 8 }} color="#636363af" />
+                <FontAwesome name="angle-down" size={16} style={{ marginLeft: 8 }} color="#636363af" />
               </View>
             </TouchableHighlight>
             {openSelect && <View style={{ elevation: 0, position: "absolute", top: 38, backgroundColor: "#fff", borderRadius: 10, borderWidth: 0.5, borderColor: "#6363636c", width: 100, zIndex: 1, width: "100%", padding: 2 }}>

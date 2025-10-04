@@ -17,7 +17,7 @@ Notifications.setNotificationHandler({
 
 export default function Settings() {
 
-    const { user } = useAuth();
+    const { user,deviceId } = useAuth();
     const [expoPushToken, setExpoPushToken] = useState('');
     const [notification, setNotification] = useState(null);
     const notificationListener = useRef();
@@ -106,9 +106,12 @@ export default function Settings() {
         const tokenData = await Notifications.getExpoPushTokenAsync();
         const token = tokenData.data;
 
-        console.log(token);
+        console.log("DeviceId", deviceId);
+        
 
-        await api.post('/users/set-push-noti-token', { token: token });
+        if (deviceId) {
+            await api.post('/users/set-push-noti-token', { token: token, deviceId: deviceId });
+        }
 
         if (Platform.OS === 'android') {
             await Notifications.setNotificationChannelAsync('default', {
@@ -137,7 +140,7 @@ export default function Settings() {
                         <ActivityIndicator size={45} color='#1F41BB' />
                     </View>
                     :
-                    <View style={{ height: "100%", marginHorizontal: 7,height: Platform.OS === 'ios' ? "92%" : "87%" }}>
+                    <View style={{ height: "100%", marginHorizontal: 7, height: Platform.OS === 'ios' ? "92%" : "87%" }}>
                         {notifications?.length > -0 && <FlatList
                             data={notifications}
                             showsVerticalScrollIndicator={false}
@@ -151,14 +154,14 @@ export default function Settings() {
                                             <View style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
                                                 <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
                                                     <Image source={require('../../assets/images/logo.png')} style={{ width: 50, height: 50, borderRadius: 10 }} />
-                                                    <Text style={{ fontSize: 15, fontWeight: "bold", marginLeft: 10, maxWidth: 317,height: 29 }}>{item.title}</Text>
+                                                    <Text style={{ fontSize: 15, fontWeight: "bold", marginLeft: 10, maxWidth: 317, height: 29 }}>{item.title}</Text>
                                                     {!item?.is_read && <View style={{ height: 15, width: 15, backgroundColor: "#1F41BB", borderRadius: 50, position: "absolute", top: -3, left: 40, borderWidth: 2, borderColor: "white", borderRadius: 50 }}></View>}
                                                 </View>
                                                 <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
                                                     <Text style={{ fontSize: 12, color: '#7a7a7a' }}>{`${item.created_at.split(' ')[0]}${item.created_at.split(' ')[1].charAt(0)}`}</Text>
                                                 </View>
                                             </View>
-                                            {item.body && <Text style={{ fontSize: 12, marginTop: 2, paddingRight: 7, marginBottom: 15, marginLeft: 62 }}>{item.body.slice(0, 80)}{item.body.length > 50 ? '...' : ''}</Text>}
+                                            {item.body && <Text style={{ fontSize: 12, marginTop: 2, paddingRight: 7, marginBottom: 15, marginLeft: 62, lineHeight: 25 }}>{item.body.slice(0, 80)}{item.body.length > 50 ? '...' : ''}</Text>}
                                         </View>
                                         {item?.image && <View>
                                             <Image source={{ uri: item.image }} style={{ width: 150, height: 150, borderRadius: 10, marginLeft: 62 }} />

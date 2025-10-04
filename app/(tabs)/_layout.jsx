@@ -1,4 +1,4 @@
-import AntDesign from '@expo/vector-icons/AntDesign';
+import Feather from '@expo/vector-icons/Feather';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -74,7 +74,7 @@ export default function TabsLayout() {
             return focused ? (
               <FontAwesome5 name="search" size={21} color={"#1F41BB"} />
             ) : (
-              <AntDesign name="search1" size={24} color={"#1F41BB"} />
+              <Feather name="search" size={24} color={"#1F41BB"} />
             )
           }
         }} />

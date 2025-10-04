@@ -13,7 +13,7 @@ import { useAuth } from "../../lib/authContext";
 
 export default function Profile() {
 
-    const { user, authLoading, removeUser, storeUser } = useAuth();
+    const { user, authLoading, removeUser, storeUser,deviceId,deviceName } = useAuth();
     const [loading, setLoading] = useState(false);
     const api = createAPI(user?.token);
 
@@ -30,7 +30,7 @@ export default function Profile() {
             const response = await api.get(`/users/${user.id}`);
             console.log(response.data.data);
             
-            storeUser(response.data.data);
+            storeUser(response.data.data,deviceId,deviceName);
 
         } catch (e) {
             console.log(e);

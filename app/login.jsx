@@ -1,7 +1,10 @@
+import { Ionicons } from '@expo/vector-icons';
+import * as Application from 'expo-application';
+import * as Device from 'expo-device';
 import { router } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
-import { Animated, Dimensions, Image, Keyboard, KeyboardAvoidingView, Platform, SafeAreaView, StyleSheet, Text, TextInput, View } from "react-native";
-import { ActivityIndicator, Button } from "react-native-paper";
+import { Animated, Dimensions, Image, Keyboard, KeyboardAvoidingView, Platform, SafeAreaView, StyleSheet, Text, TextInput, TouchableHighlight, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator } from "react-native-paper";
 import Toast from "react-native-toast-message";
 import createAPI from '../lib/api';
 import { useAuth } from '../lib/authContext';
@@ -21,8 +24,11 @@ export default function Login() {
     const [password, setPassword] = useState('');
     const [passwordError, setPasswordError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [deviceId, setDeviceId] = useState('');
+    const [deviceName, setDeviceName] = useState('');
     const [keyboardVisible, setKeyboardVisible] = useState(false);
     const { storeUser } = useAuth();
+    const [showPassword, setShowPassword] = useState(false);
 
     const loopAnimation1 = (animatedValue, delay = 0) => {
         Animated.loop(
@@ -78,10 +84,27 @@ export default function Login() {
         ).start();
     };
 
+    const setDeviceInfo = async () => {
+        let id;
+
+        if (Platform.OS === "android") {
+
+            id = Application.getAndroidId();
+
+        } else if (Platform.OS === "ios") {
+            id = await Application.getIosIdForVendorAsync();
+        }
+
+        setDeviceId(id || "Unknown ID");
+        setDeviceName(Device.deviceName || "Unknown Device");
+    }
+
     useEffect(() => {
         loopAnimation1(translateX1, 0);
         loopAnimation2(translateX2, 1000); // staggered start
         loopAnimation3(translateX3, 1000);
+
+        setDeviceInfo();
 
         const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
             setKeyboardVisible(true);
@@ -89,6 +112,7 @@ export default function Login() {
         const hideSubscription = Keyboard.addListener("keyboardDidHide", () => {
             setKeyboardVisible(false);
         });
+
 
         return () => {
             showSubscription.remove();
@@ -129,7 +153,9 @@ export default function Login() {
 
             const response = await api.post('login', {
                 email: email,
-                password: password
+                password: password,
+                deviceId: deviceId,
+                deviceName: deviceName
             }, {
                 timeout: 15000,
             })
@@ -158,7 +184,7 @@ export default function Login() {
                     visibilityTime: 3000,
                 })
 
-                storeUser(response.data.data);
+                storeUser(response.data.data, deviceId, deviceName);
                 router.replace('/');
 
             }
@@ -234,19 +260,53 @@ export default function Login() {
                 <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#1F41BB' }}>Login here</Text>
                 <Text style={{ marginTop: 20, fontWeight: 'bold' }}>Welcome back you've </Text>
                 <Text style={{ fontWeight: 'bold' }}>been missed!</Text>
-
                 <View style={{ width: '100%', marginTop: 20 }}>
-                    <TextInput placeholder="Email" onChangeText={setEmail} value={email} autoCapitalize='none' style={[styles.inputBox, emailError ? { borderWidth: 1, borderColor: "red" } : null]} placeholderTextColor={"#626262"} />
+                    <TextInput placeholder="Email" onChangeText={setEmail} value={email} autoCapitalize='none' style={[styles.inputBox, emailError ? { borderWidth: 1, borderColor: "red", color: "black" } : null]} placeholderTextColor={"#000"} />
                     {emailError && <Text style={{ color: "red", marginTop: 7, marginLeft: 2, fontSize: 12, fontWeight: 'bold' }}>{emailError}</Text>}
 
-                    <TextInput placeholder="Password" onChangeText={setPassword} value={password} secureTextEntry style={[styles.inputBox, passwordError ? { borderWidth: 1, borderColor: "red" } : null]} placeholderTextColor={"#626262"} />
+                    <View style={{ position: 'relative' }}>
+                        <TextInput
+                            placeholder="Password"
+                            onChangeText={setPassword}
+                            value={password}
+                            secureTextEntry={!showPassword}
+                            style={[
+                                styles.inputBox,
+                                passwordError && { borderWidth: 1, borderColor: "red", color: "black" }
+                            ]}
+                            placeholderTextColor={"#000"}
+                        />
+
+                        <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={{ position: 'absolute', top: "50%", right: 10 }}>
+                            <Ionicons
+                                name={showPassword ? "eye-off" : "eye"}
+                                size={22}
+                                color="#5f5f5fff"
+                            />
+                        </TouchableOpacity>
+                    </View>
                     {passwordError && <Text style={{ color: "red", marginTop: 7, marginLeft: 2, fontSize: 12, fontWeight: 'bold' }}>{passwordError}</Text>}
 
                     <Text style={{ marginVertical: 20, color: '#1F41BB', fontSize: 12, textAlign: 'right', fontWeight: 'bold' }}>Forgot your password?</Text>
 
-                    <Button mode="contained" style={styles.button} onPress={handleLogin}>
-                        <Text style={{ color: '#fff', fontWeight: 'bold' }}>{loading ? <ActivityIndicator size={20} color="white" /> : 'Login'}</Text>
-                    </Button>
+                    <TouchableHighlight
+                        onPress={handleLogin}
+                        underlayColor="#1F41BB"
+                        style={styles.button}
+                        disabled={loading}
+                    >
+                        {loading ? (
+                            <View style={{ flexDirection: "row", alignItems: "center" }}>
+                                <ActivityIndicator size={20} color="#fff" />
+                            </View>
+                        ) : (
+                            <View>
+                                <Text style={{ color: "#fff", fontWeight: "bold" }}>Login</Text>
+                            </View>
+                        )}
+                    </TouchableHighlight>
+
+
 
                 </View>
 
@@ -283,6 +343,10 @@ const styles = StyleSheet.create({
         height: 45,
         borderRadius: 7,
         backgroundColor: '#1F41BB',
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
     },
     image: {
         width: 330,

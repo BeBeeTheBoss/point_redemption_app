@@ -210,7 +210,7 @@ export default function Index() {
             flexDirection: "row",
             justifyContent: "space-between",
             alignItems: "center",
-            marginTop: Platform.OS === 'ios' ? 20 : 60,
+            marginTop: Platform.OS === 'ios' ? 20 : 20,
             marginBottom: 20,
             marginHorizontal: 20
           }}
@@ -258,7 +258,7 @@ export default function Index() {
             </TouchableHighlight>
             {openSelect && <View style={{ elevation: 0, position: "absolute", top: 38, backgroundColor: "#fff", borderRadius: 10, borderWidth: 0.5, borderColor: "#6363636c", width: 100, zIndex: 1, width: "100%", padding: 2 }}>
               <FlatList
-                data={[{ 'label': 'This month', 'value': 'month' }, { 'label': 'This day', 'value': 'day' }]}
+                data={[{ 'label': 'This month', 'value': 'month' }, { 'label': 'This day', 'value': 'day' },{ 'label': 'All', 'value': 'all' }]}
                 renderItem={({ item, index }) => {
                   return (
                     <TouchableHighlight activeOpacity={0.6} onPress={(e) => { handleSelect(item) }} underlayColor="#DDDDDD" style={{ paddingHorizontal: 20, paddingVertical: 10, borderRadius: 10 }}>

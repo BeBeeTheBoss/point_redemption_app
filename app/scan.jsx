@@ -58,7 +58,7 @@ export default function Scan() {
         return;
       }
 
-      const response = await api.post('redeem-points', { idcard: data.split('|')[1], points: data.split('|')[3], promotion_code: (data.split('|')[5]).split(',')[0], qty: data.split('|')[4] });
+      const response = await api.post('redeem-points', { idcard: data.split('|')[1], points: data.split('|')[3], promotion_code: (data.split('|')[5]).split(',')[0], qty: data.split('|')[4], timeStamp: data.split('|')[0]});
       console.log(response.data);
 
       if (response.data.status == 200) {

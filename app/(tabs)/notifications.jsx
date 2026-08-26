@@ -127,7 +127,7 @@ export default function Settings() {
 
     return (
         <SafeAreaView style={styles.container}>
-            <View style={{ height: "100%", marginTop: Platform.OS === 'android' ? 60 : 20, }}>
+            <View style={{ height: "100%", marginTop: Platform.OS === 'android' ? 20 : 20, }}>
                 <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginHorizontal: 20, marginBottom: 10 }}>
                     <Text style={{ fontSize: 20, fontWeight: "bold" }}>Notifications</Text>
                     <TouchableOpacity onPress={markAllAsRead}>

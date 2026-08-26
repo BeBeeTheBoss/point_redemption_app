@@ -41,7 +41,7 @@ export default function Profile() {
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: 'white', paddingHorizontal: 25 }}>
-            <ScrollView refreshControl={<RefreshControl refreshing={loading} onRefresh={onRefresh} />} style={{ height: "100%", paddingHorizontal: Platform.OS === 'android' ? 0 : 25, paddingTop: Platform.OS === 'android' ? 0 : 30 }}>
+            <ScrollView refreshControl={<RefreshControl refreshing={loading} onRefresh={onRefresh} />} style={{ marginTop: Platform.OS === "android" ? -30 : 0,height: "100%", paddingHorizontal: Platform.OS === 'android' ? 0 : 25, paddingTop: Platform.OS === 'android' ? 0 : 30 }}>
                 <View style={styles.header}>
                     <View style={{ width: "50%"}}>
                         <Text style={{ fontSize: 13 }}>You are logged in as</Text>
